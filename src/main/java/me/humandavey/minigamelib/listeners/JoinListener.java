@@ -1,2 +1,6 @@
-package me.humandavey.minigamelib.listeners;public class JoinListener {
+package me.humandavey.minigamelib.listeners;
+
+import org.bukkit.event.Listener;
+
+public class JoinListener implements Listener {
 }

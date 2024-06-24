@@ -1,2 +1,4 @@
-package me.humandavey.minigamelib.managers;public class MapManager {
+package me.humandavey.minigamelib.managers;
+
+public class MapManager {
 }

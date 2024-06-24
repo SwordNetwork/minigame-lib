@@ -1,2 +1,4 @@
-package me.humandavey.minigamelib.managers;public class NametagManager {
+package me.humandavey.minigamelib.managers;
+
+public class NametagManager {
 }

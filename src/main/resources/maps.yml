@@ -1,0 +1,22 @@
+maps:
+  "Altar":
+    supported-games:
+      - "Water Clutcher"
+    max-players: 16
+    min-players: 2
+    autostart-players: 4
+    locations:
+      spawn:
+        x: 0.5
+        y: 65
+        z: 0.5
+        yaw: 180
+        pitch: 0
+      corner1:
+        x: 90
+        z: 90
+      corner2:
+        x: -90
+        z: -90
+    build-height: 180
+    schematic: "schematics/altar.schematic"

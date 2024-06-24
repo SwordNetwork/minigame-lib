@@ -1,2 +1,4 @@
-package me.humandavey.minigamelib.managers;public class ScoreboardManager {
+package me.humandavey.minigamelib.managers;
+
+public class ScoreboardManager {
 }
