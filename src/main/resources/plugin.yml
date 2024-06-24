@@ -1,0 +1,4 @@
+name: MinigameLib
+version: '${project.version}'
+main: me.humandavey.minigamelib.MinigameLib
+api-version: '1.21'
