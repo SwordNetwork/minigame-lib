@@ -4,12 +4,14 @@ import me.humandavey.minigamelib.game.Game;
 import me.humandavey.minigamelib.game.GameInfo;
 import me.humandavey.minigamelib.game.GameType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class WaterClutcher extends Game {
     public WaterClutcher() {
         super(new GameInfo(
                 "Water Clutcher",
-                new String[]{"Try not to die from fall damage", "while being the last player alive!"},
-                null,
+                (ArrayList<String>) List.of("Try not to die from fall damage", "while being the last player alive!"),
                 GameType.TEAM_DEATHMATCH,
                 8)
         );

@@ -1,6 +1,8 @@
 package me.humandavey.minigamelib;
 
 import me.humandavey.minigamelib.listeners.JoinListener;
+import me.humandavey.minigamelib.managers.GameManager;
+import me.humandavey.minigamelib.managers.MapManager;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -12,8 +14,12 @@ import java.io.IOException;
 public final class MinigameLib extends JavaPlugin {
 
     private static MinigameLib instance;
+
     private File mapsFile;
     private FileConfiguration mapsConfig;
+
+    private MapManager mapManager;
+    private GameManager gameManager;
 
     @Override
     public void onEnable() {
@@ -51,7 +57,8 @@ public final class MinigameLib extends JavaPlugin {
     }
 
     public void setupManagers() {
-
+        mapManager = new MapManager();
+        gameManager = new GameManager();
     }
 
     public void registerListeners() {
@@ -68,6 +75,14 @@ public final class MinigameLib extends JavaPlugin {
 
     public File getMapsFile() {
         return mapsFile;
+    }
+
+    public MapManager getMapManager() {
+        return mapManager;
+    }
+
+    public GameManager getGameManager() {
+        return gameManager;
     }
 
     public static MinigameLib getInstance() {
