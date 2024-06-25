@@ -4,6 +4,7 @@ import me.humandavey.minigamelib.MinigameLib;
 import me.humandavey.minigamelib.game.GameInfo;
 import me.humandavey.minigamelib.map.Map;
 import me.humandavey.minigamelib.map.SerializableLocation;
+import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.ArrayList;
@@ -11,9 +12,11 @@ import java.util.ArrayList;
 public class MapManager {
 
     private final ArrayList<Map> maps = new ArrayList<>();
+    private int i;
 
     public MapManager() {
         init();
+        i = 0;
     }
 
     public void init() {
@@ -41,5 +44,10 @@ public class MapManager {
         if (availableMaps.isEmpty()) return null;
 
         return availableMaps.get((int)(Math.random() * availableMaps.size()));
+    }
+
+    public Location getNextGameLocation() {
+        int x = 500 * i++;
+        return new Location(maps.getFirst().getSpawn().getWorld(), x, 65, 0);
     }
 }

@@ -2,9 +2,11 @@ package me.humandavey.minigamelib.managers;
 
 import me.humandavey.minigamelib.game.Game;
 import me.humandavey.minigamelib.game.GameInfo;
+import me.humandavey.minigamelib.game.GameState;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Optional;
 
 public class GameManager {
@@ -36,6 +38,29 @@ public class GameManager {
             }
         }
         return filtered;
+    }
+
+    public Game getJoinableGame(String gameName) {
+        ArrayList<Game> filtered = new ArrayList<>();
+        for (Game game : games) {
+            if (game.getInfo().name().equals(gameName)) {
+                if (game.isJoinable()) {
+                    filtered.add(game);
+                }
+            }
+        }
+
+        if (filtered.isEmpty()) {
+            return Game.of(gameName);
+        }
+
+        Game mostPlayers = filtered.getFirst();
+        for (Game game : filtered) {
+            if (game.getPlayers().size() > mostPlayers.getPlayers().size()) {
+                mostPlayers = game;
+            }
+        }
+        return mostPlayers;
     }
 
     public void registerGame(Game game) {

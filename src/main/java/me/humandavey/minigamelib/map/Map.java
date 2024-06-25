@@ -85,7 +85,7 @@ public class Map {
         return schematic;
     }
 
-    public void pasteSchematic() {
+    public void pasteSchematic(Location offset) {
         File file = new File(MinigameLib.getInstance().getDataFolder(), schematic);
         ClipboardFormat format = ClipboardFormats.findByFile(file);
 
@@ -101,7 +101,7 @@ public class Map {
         try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(BukkitAdapter.adapt(spawn.getWorld()), -1)) {
             Operation operation = new ClipboardHolder(clipboard)
                     .createPaste(editSession)
-                    .to(BlockVector3.at(spawn.getX(), spawn.getY(), spawn.getZ()))
+                    .to(BlockVector3.at(spawn.getX() + offset.getX(), spawn.getY() + offset.getY(), spawn.getZ() + offset.getZ()))
                     .ignoreAirBlocks(false)
                     .build();
             Operations.complete(operation);
