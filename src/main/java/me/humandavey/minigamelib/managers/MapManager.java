@@ -1,10 +1,10 @@
 package me.humandavey.minigamelib.managers;
 
 import me.humandavey.minigamelib.MinigameLib;
+import me.humandavey.minigamelib.game.Game;
 import me.humandavey.minigamelib.game.GameInfo;
 import me.humandavey.minigamelib.map.Map;
 import me.humandavey.minigamelib.map.SerializableLocation;
-import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.ArrayList;
@@ -12,11 +12,9 @@ import java.util.ArrayList;
 public class MapManager {
 
     private final ArrayList<Map> maps = new ArrayList<>();
-    private int i;
 
     public MapManager() {
         init();
-        i = 0;
     }
 
     public void init() {
@@ -31,23 +29,22 @@ public class MapManager {
         return maps;
     }
 
-    public Map createMap(GameInfo info) {
+    public Map getMap(Game game) {
         ArrayList<Map> availableMaps = new ArrayList<>();
         for (Map map : maps) {
-            for (String game : map.getSupportedGames()) {
-                if (game.equals(info.name())) {
-                    availableMaps.add(map);
-                    break;
+            if (map.isAvailable()) {
+                for (String supportedGame : map.getSupportedGames()) {
+                    if (supportedGame.equals(game.getInfo().name())) {
+                        availableMaps.add(map);
+                        break;
+                    }
                 }
             }
         }
         if (availableMaps.isEmpty()) return null;
 
-        return availableMaps.get((int)(Math.random() * availableMaps.size()));
-    }
-
-    public Location getNextGameLocation() {
-        int x = 500 * i++;
-        return new Location(maps.getFirst().getSpawn().getWorld(), x, 65, 0);
+        Map map = availableMaps.get((int)(Math.random() * availableMaps.size()));
+        map.setGame(game);
+        return map;
     }
 }

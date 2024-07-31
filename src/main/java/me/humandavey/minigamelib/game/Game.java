@@ -4,7 +4,6 @@ import me.humandavey.minigamelib.MinigameLib;
 import me.humandavey.minigamelib.game.games.WaterClutcher;
 import me.humandavey.minigamelib.map.Map;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
@@ -19,16 +18,12 @@ public abstract class Game implements Listener {
 
     public Game(GameInfo info) {
         this.info = info;
-        this.map = MinigameLib.getInstance().getMapManager().createMap(info);
+        this.map = MinigameLib.getInstance().getMapManager().getMap(this);
         this.players = new ArrayList<>();
         this.state = GameState.INIT;
 
         Bukkit.getPluginManager().registerEvents(this, MinigameLib.getInstance());
         MinigameLib.getInstance().getGameManager().registerGame(this);
-
-        Location offset = MinigameLib.getInstance().getMapManager().getNextGameLocation();
-
-        map.pasteSchematic(offset);
     }
 
     public abstract void onGameStart();

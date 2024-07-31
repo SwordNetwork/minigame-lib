@@ -53,8 +53,6 @@ public final class MinigameLib extends JavaPlugin {
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
-
-        new File(getDataFolder(), "schematics").mkdirs();
     }
 
     public void setupManagers() {

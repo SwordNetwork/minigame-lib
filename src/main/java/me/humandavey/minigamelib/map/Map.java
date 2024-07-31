@@ -1,23 +1,8 @@
 package me.humandavey.minigamelib.map;
 
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.WorldEditException;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.extent.clipboard.Clipboard;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
-import com.sk89q.worldedit.function.operation.Operation;
-import com.sk89q.worldedit.function.operation.Operations;
-import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.session.ClipboardHolder;
 import me.humandavey.minigamelib.MinigameLib;
+import me.humandavey.minigamelib.game.Game;
 import org.bukkit.Location;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 
 public class Map {
     private final String name;
@@ -29,10 +14,10 @@ public class Map {
     private final Location corner1;
     private final Location corner2;
     private final int buildHeight;
-    private final String schematic;
+    private Game game;
 
     public Map(String name, String[] supportedGames, int maxPlayers, int minPlayers, int autostartPlayers,
-               Location spawn, Location corner1, Location corner2, int buildHeight, String schematic) {
+               Location spawn, Location corner1, Location corner2, int buildHeight) {
         this.name = name;
         this.supportedGames = supportedGames;
         this.maxPlayers = maxPlayers;
@@ -42,7 +27,17 @@ public class Map {
         this.corner1 = corner1;
         this.corner2 = corner2;
         this.buildHeight = buildHeight;
-        this.schematic = schematic;
+    }
+
+    // If the map is ready for a new game to be played
+    public boolean isAvailable() {
+        return game == null;
+    }
+
+    public void setGame(Game game) {
+        if (isAvailable()) {
+            this.game = game;
+        }
     }
 
     public String getName() {
@@ -79,35 +74,6 @@ public class Map {
 
     public int getBuildHeight() {
         return buildHeight;
-    }
-
-    public String getSchematic() {
-        return schematic;
-    }
-
-    public void pasteSchematic(Location offset) {
-        File file = new File(MinigameLib.getInstance().getDataFolder(), schematic);
-        ClipboardFormat format = ClipboardFormats.findByFile(file);
-
-        Clipboard clipboard = null;
-        try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
-            clipboard = reader.read();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if (clipboard == null) return;
-
-        try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(BukkitAdapter.adapt(spawn.getWorld()), -1)) {
-            Operation operation = new ClipboardHolder(clipboard)
-                    .createPaste(editSession)
-                    .to(BlockVector3.at(spawn.getX() + offset.getX(), spawn.getY() + offset.getY(), spawn.getZ() + offset.getZ()))
-                    .ignoreAirBlocks(false)
-                    .build();
-            Operations.complete(operation);
-        } catch (WorldEditException e) {
-            e.printStackTrace();
-        }
     }
 
     public void serialize() {
