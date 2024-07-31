@@ -7,4 +7,14 @@
 #                   __/ |
 #                  |___/                 By humandavey
 #
-# Please read our wiki @ (coming soon)
+# Please read the wiki @ (coming soon)
+
+settings:
+
+messages:
+  commands:
+    no-permission: "&cYou don't have permission to use this command!"
+    join:
+      usage: "&cUsage: /join <gametype>"
+  game:
+    joined: "&eYou joined the game!"

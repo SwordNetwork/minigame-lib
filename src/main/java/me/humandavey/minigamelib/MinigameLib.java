@@ -1,9 +1,10 @@
 package me.humandavey.minigamelib;
 
-import me.humandavey.minigamelib.command.commands.TestCommand;
+import me.humandavey.minigamelib.command.commands.JoinCommand;
 import me.humandavey.minigamelib.listeners.JoinListener;
 import me.humandavey.minigamelib.managers.GameManager;
 import me.humandavey.minigamelib.managers.MapManager;
+import me.humandavey.minigamelib.util.Config;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -30,6 +31,8 @@ public final class MinigameLib extends JavaPlugin {
         setupManagers();
         registerListeners();
         registerCommands();
+
+        Config.refresh();
     }
 
     @Override
@@ -65,7 +68,7 @@ public final class MinigameLib extends JavaPlugin {
     }
 
     public void registerCommands() {
-        new TestCommand();
+        new JoinCommand();
     }
 
     public FileConfiguration getMapsConfig() {

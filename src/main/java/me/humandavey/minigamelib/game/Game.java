@@ -3,6 +3,8 @@ package me.humandavey.minigamelib.game;
 import me.humandavey.minigamelib.MinigameLib;
 import me.humandavey.minigamelib.game.games.WaterClutcher;
 import me.humandavey.minigamelib.map.Map;
+import me.humandavey.minigamelib.util.Config;
+import me.humandavey.minigamelib.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -33,7 +35,7 @@ public abstract class Game implements Listener {
     public abstract boolean endCondition();
 
     public boolean isJoinable() {
-        return state == GameState.WAITING || (state == GameState.STARTING && players.size() < map.getMaxPlayers());
+        return map != null && (state == GameState.WAITING || (state == GameState.STARTING && players.size() < map.getMaxPlayers()));
     }
 
     public GameInfo getInfo() {
@@ -46,6 +48,14 @@ public abstract class Game implements Listener {
 
     public ArrayList<Player> getPlayers() {
         return players;
+    }
+
+    public void addPlayer(Player player) {
+        if (isJoinable()) {
+            players.add(player);
+            player.teleport(map.getSpawn());
+            player.sendMessage(Util.colorize(Config.MESSAGES_GAME_JOINED));
+        }
     }
 
     public void setState(GameState state) {
