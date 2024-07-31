@@ -30,7 +30,6 @@ public class SerializableLocation {
         file.set(path + ".locations.corner2.x", map.getCorner2().getX());
         file.set(path + ".locations.corner2.z", map.getCorner2().getZ());
         file.set(path + ".build-height", map.getBuildHeight());
-        file.set(path + ".schematic", map.getSchematic());
 
         try {
             file.save(MinigameLib.getInstance().getMapsFile());
@@ -61,7 +60,6 @@ public class SerializableLocation {
         Location corner2 = new Location(Bukkit.getWorld("world"), corner2X, 0, corner2Z);
 
         int buildHeight = file.getInt(path + ".build-height");
-        String schematic = file.getString(path + ".schematic");
 
         return new Map(
             name,
@@ -72,8 +70,7 @@ public class SerializableLocation {
             spawnLocation,
             corner1,
             corner2,
-            buildHeight,
-            schematic
+            buildHeight
         );
     }
 }
