@@ -3,8 +3,6 @@ package me.humandavey.minigamelib.game;
 import me.humandavey.minigamelib.MinigameLib;
 import me.humandavey.minigamelib.game.games.WaterClutcher;
 import me.humandavey.minigamelib.map.Map;
-import me.humandavey.minigamelib.util.Config;
-import me.humandavey.minigamelib.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -26,6 +24,8 @@ public abstract class Game implements Listener {
 
         Bukkit.getPluginManager().registerEvents(this, MinigameLib.getInstance());
         MinigameLib.getInstance().getGameManager().registerGame(this);
+
+        this.state = GameState.WAITING;
     }
 
     public abstract void onGameStart();
@@ -54,7 +54,6 @@ public abstract class Game implements Listener {
         if (isJoinable()) {
             players.add(player);
             player.teleport(map.getSpawn());
-            player.sendMessage(Util.colorize(Config.MESSAGES_GAME_JOINED));
         }
     }
 
@@ -64,16 +63,5 @@ public abstract class Game implements Listener {
 
     public GameState getState() {
         return state;
-    }
-
-    public static Game of(String gameName) {
-        switch (gameName) {
-            case "Water Clutcher" -> {
-                return new WaterClutcher();
-            }
-            default -> {
-                return null;
-            }
-        }
     }
 }

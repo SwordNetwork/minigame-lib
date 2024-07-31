@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 public class JoinCommand extends Command {
 
     public JoinCommand() {
-        super("join", null, "");
+        super("join", new String[]{"play"}, "");
     }
 
     @Override
@@ -29,6 +29,9 @@ public class JoinCommand extends Command {
 
             if (game != null) {
                 game.addPlayer(player);
+                player.sendMessage(Util.colorize(Config.MESSAGES_GAME_JOINED));
+            } else {
+                player.sendMessage(Util.colorize(Config.MESSAGES_GAME_NONEAVAILABLE));
             }
         } else {
             player.sendMessage(Util.colorize(Config.MESSAGES_COMMANDS_JOIN_USAGE));

@@ -1,5 +1,6 @@
 package me.humandavey.minigamelib;
 
+import me.humandavey.minigamelib.command.commands.GameCommand;
 import me.humandavey.minigamelib.command.commands.JoinCommand;
 import me.humandavey.minigamelib.listeners.JoinListener;
 import me.humandavey.minigamelib.managers.GameManager;
@@ -69,6 +70,7 @@ public final class MinigameLib extends JavaPlugin {
 
     public void registerCommands() {
         new JoinCommand();
+        new GameCommand();
     }
 
     public FileConfiguration getMapsConfig() {

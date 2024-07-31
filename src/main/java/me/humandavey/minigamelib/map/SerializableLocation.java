@@ -39,7 +39,7 @@ public class SerializableLocation {
     }
 
     public Map read() {
-        String name = path.substring(path.lastIndexOf("."));
+        String name = path.substring(path.lastIndexOf(".") + 1);
 
         String[] supportedGames = file.getStringList(path + ".supported-games").toArray(new String[0]);
         int maxPlayers = file.getInt(path + ".max-players");

@@ -18,3 +18,4 @@ messages:
       usage: "&cUsage: /join <gametype>"
   game:
     joined: "&eYou joined the game!"
+    none-available: "&cThere are no games currently available! Please try again later."

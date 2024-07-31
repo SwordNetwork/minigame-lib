@@ -21,13 +21,13 @@ public class GameManager {
         return games;
     }
 
-    public Optional<Game> getGame(Player player) {
+    public Game getGame(Player player) {
         for (Game game : games) {
             if (game.getPlayers().contains(player)) {
-                return Optional.of(game);
+                return game;
             }
         }
-        return Optional.empty();
+        return null;
     }
 
     public ArrayList<Game> getGames(GameInfo info) {
@@ -51,7 +51,7 @@ public class GameManager {
         }
 
         if (filtered.isEmpty()) {
-            return Game.of(gameName);
+            return null;
         }
 
         Game mostPlayers = filtered.getFirst();

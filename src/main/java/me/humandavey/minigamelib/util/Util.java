@@ -2,12 +2,18 @@ package me.humandavey.minigamelib.util;
 
 import org.bukkit.ChatColor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.bukkit.ChatColor.COLOR_CHAR;
 
 public class Util {
+
+    public static <E> ArrayList<E> listOf(E... list) {
+        return new ArrayList<>(List.of(list));
+    }
 
     public static String colorize(String message) {
         return ChatColor.translateAlternateColorCodes('&', translateHexColorCodes(message));
