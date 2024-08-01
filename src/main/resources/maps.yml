@@ -19,4 +19,3 @@ maps:
         x: -90
         z: -90
     build-height: 180
-    schematic: "schematics/altar.schem"

@@ -1,5 +1,6 @@
 package me.humandavey.minigamelib.managers;
 
+import me.humandavey.minigamelib.MinigameLib;
 import me.humandavey.minigamelib.game.Game;
 import me.humandavey.minigamelib.game.GameInfo;
 import me.humandavey.minigamelib.game.GameState;
@@ -40,10 +41,10 @@ public class GameManager {
         return filtered;
     }
 
-    public Game getJoinableGame(String gameName) {
+    public Game getJoinableGame(GameInfo gameInfo) {
         ArrayList<Game> filtered = new ArrayList<>();
         for (Game game : games) {
-            if (game.getInfo().name().equals(gameName)) {
+            if (game.getInfo().name().equals(gameInfo.name())) {
                 if (game.isJoinable()) {
                     filtered.add(game);
                 }
@@ -51,7 +52,9 @@ public class GameManager {
         }
 
         if (filtered.isEmpty()) {
-            return null;
+            if (MinigameLib.getInstance().getMapManager().isMapAvailableFor(gameInfo)) {
+                return Game.of(gameInfo);
+            }
         }
 
         Game mostPlayers = filtered.getFirst();

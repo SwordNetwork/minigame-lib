@@ -4,6 +4,7 @@ import me.humandavey.minigamelib.game.Game;
 import me.humandavey.minigamelib.game.GameInfo;
 
 public class WaterClutcher extends Game {
+
     public WaterClutcher() {
         super(GameInfo.WATER_CLUTCHER);
     }

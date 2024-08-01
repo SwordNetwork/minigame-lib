@@ -3,9 +3,18 @@ package me.humandavey.minigamelib.game;
 import me.humandavey.minigamelib.MinigameLib;
 import me.humandavey.minigamelib.game.games.WaterClutcher;
 import me.humandavey.minigamelib.map.Map;
+import me.humandavey.minigamelib.util.Util;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 
@@ -34,6 +43,24 @@ public abstract class Game implements Listener {
 
     public abstract boolean endCondition();
 
+    public void onPlayerJoin(Player player) {
+        player.setHealth(20);
+        player.setHealthScale(20);
+        player.setFoodLevel(20);
+        player.setAllowFlight(false);
+        player.setExp(0);
+        player.setLevel(0);
+        player.setFallDistance(0);
+        player.getInventory().clear();
+        player.setFireTicks(0);
+        player.getActivePotionEffects().clear();
+        player.getInventory().setArmorContents(new ItemStack[4]);
+        player.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
+        player.setGameMode(GameMode.ADVENTURE);
+        player.resetTitle();
+        player.setSaturation(.6f);
+    }
+
     public boolean isJoinable() {
         return map != null && (state == GameState.WAITING || (state == GameState.STARTING && players.size() < map.getMaxPlayers()));
     }
@@ -54,6 +81,8 @@ public abstract class Game implements Listener {
         if (isJoinable()) {
             players.add(player);
             player.teleport(map.getSpawn());
+
+            onPlayerJoin(player);
         }
     }
 
@@ -63,5 +92,62 @@ public abstract class Game implements Listener {
 
     public GameState getState() {
         return state;
+    }
+
+    @EventHandler
+    public void onPlayerDamage(EntityDamageEvent event) {
+        if (event.getEntity() instanceof Player player) {
+            if (players.contains(player)) {
+                if (state != GameState.LIVE) {
+                    event.setCancelled(true);
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event) {
+        if (players.contains(event.getPlayer())) {
+            if (state != GameState.LIVE) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onBlockPlace(BlockPlaceEvent event) {
+        if (players.contains(event.getPlayer())) {
+            if (state != GameState.LIVE) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onMove(PlayerMoveEvent event) {
+        if (players.contains(event.getPlayer())) {
+            if (state != GameState.LIVE) {
+                if (event.getFrom().getBlock() != event.getTo().getBlock()) {
+                    if (!Util.isInRegion(event.getTo(), map.getCorner1(), map.getCorner2())) {
+                        event.setCancelled(true);
+                    }
+                }
+            } else if (event.getFrom().getBlock() != event.getTo().getBlock()) {
+                if (!Util.isInRegion(event.getTo(), map.getCorner1(), map.getCorner2())) {
+                    event.setCancelled(true);
+                }
+            }
+        }
+    }
+
+    public static Game of(GameInfo gameInfo) {
+        switch (gameInfo.name()) {
+            case "Water Clutcher" -> {
+                return new WaterClutcher();
+            }
+            default -> {
+                return null;
+            }
+        }
     }
 }

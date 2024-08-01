@@ -1,6 +1,7 @@
 package me.humandavey.minigamelib.util;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,24 @@ public class Util {
 
     public static <E> ArrayList<E> listOf(E... list) {
         return new ArrayList<>(List.of(list));
+    }
+
+    // Checks X, Y, and Z
+    public static boolean isInRegion(Location source, Location bound1, Location bound2) {
+        return source.getX() >= Math.min(bound1.getX(), bound2.getX()) &&
+                source.getY() >= Math.min(bound1.getY(), bound2.getY()) &&
+                source.getZ() >= Math.min(bound1.getZ(), bound2.getZ()) &&
+                source.getX() <= Math.max(bound1.getX(), bound2.getX()) &&
+                source.getY() <= Math.max(bound1.getY(), bound2.getY()) &&
+                source.getZ() <= Math.max(bound1.getZ(), bound2.getZ());
+    }
+
+    // Only checks X and Z
+    public static boolean isInBounds(Location source, Location bound1, Location bound2) {
+        return source.getX() >= Math.min(bound1.getX(), bound2.getX()) &&
+                source.getZ() >= Math.min(bound1.getZ(), bound2.getZ()) &&
+                source.getX() <= Math.max(bound1.getX(), bound2.getX()) &&
+                source.getZ() <= Math.max(bound1.getZ(), bound2.getZ());
     }
 
     public static String colorize(String message) {

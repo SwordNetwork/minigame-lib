@@ -21,12 +21,28 @@ public class MapManager {
         FileConfiguration config = MinigameLib.getInstance().getMapsConfig();
 
         for (String section : config.getConfigurationSection("maps").getKeys(false)) {
-            maps.add(Map.deserialize(new SerializableLocation(config, "maps." + section)));
+            Map map = Map.deserialize(new SerializableLocation(config, "maps." + section));
+            maps.add(map);
+            MinigameLib.getInstance().getLogger().info("Successfully created map '" + map.getName() + "'");
         }
     }
 
     public ArrayList<Map> getMaps() {
         return maps;
+    }
+
+    public boolean isMapAvailableFor(GameInfo info) {
+        for (Map map : maps) {
+            if (map.isAvailable()) {
+                for (String supportedGame : map.getSupportedGames()) {
+                    if (supportedGame.equals(info.name())) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     public Map getMap(Game game) {

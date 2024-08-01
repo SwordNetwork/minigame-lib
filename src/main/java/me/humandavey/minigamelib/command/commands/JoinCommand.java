@@ -22,7 +22,7 @@ public class JoinCommand extends Command {
             Game game = null;
             for (GameInfo info : GameInfo.getAllGameInfo()) {
                 if (info.aliases().contains(gameName)) {
-                    game = MinigameLib.getInstance().getGameManager().getJoinableGame(info.name());
+                    game = MinigameLib.getInstance().getGameManager().getJoinableGame(info);
                     break;
                 }
             }

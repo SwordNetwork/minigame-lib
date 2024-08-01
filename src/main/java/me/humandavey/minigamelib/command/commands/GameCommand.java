@@ -5,8 +5,6 @@ import me.humandavey.minigamelib.command.Command;
 import me.humandavey.minigamelib.game.Game;
 import org.bukkit.entity.Player;
 
-import java.util.Optional;
-
 public class GameCommand extends Command {
 
     public GameCommand() {
