@@ -10,6 +10,15 @@
 # Please read the wiki @ (coming soon)
 
 settings:
+  game:
+    countdown:
+      time: 20
+    starting-message:
+      - "&e============================"
+      - "Welcome to %game%!"
+      - ""
+      - "%description%"
+      - "&e============================"
 
 messages:
   commands:
@@ -19,3 +28,13 @@ messages:
   game:
     joined: "&eYou joined the game!"
     none-available: "&cThere are no games currently available! Please try again later."
+    countdown:
+      message: "&eThe game will start in %color%%time% &eseconds!"
+      title: "%color%%time%"
+      subtitle: "&eGet ready to fight!"
+    starting-message:
+      - "&e============================"
+      - "Welcome to %game%!"
+      - ""
+      - "%description%"
+      - "&e============================"

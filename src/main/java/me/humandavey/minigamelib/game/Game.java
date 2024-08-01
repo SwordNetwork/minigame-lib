@@ -4,6 +4,7 @@ import me.humandavey.minigamelib.MinigameLib;
 import me.humandavey.minigamelib.game.games.WaterClutcher;
 import me.humandavey.minigamelib.map.Map;
 import me.humandavey.minigamelib.util.Util;
+import me.humandavey.minigame.instance.Countdown;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -24,11 +25,13 @@ public abstract class Game implements Listener {
     private final Map map;
     private final ArrayList<Player> players;
     private GameState state;
+    private Countdown countdown;
 
     public Game(GameInfo info) {
         this.info = info;
         this.map = MinigameLib.getInstance().getMapManager().getMap(this);
         this.players = new ArrayList<>();
+        this.countdown = new Countdown(this);
         this.state = GameState.INIT;
 
         Bukkit.getPluginManager().registerEvents(this, MinigameLib.getInstance());
@@ -42,57 +45,6 @@ public abstract class Game implements Listener {
     public abstract void onGameEnd();
 
     public abstract boolean endCondition();
-
-    public void onPlayerJoin(Player player) {
-        player.setHealth(20);
-        player.setHealthScale(20);
-        player.setFoodLevel(20);
-        player.setAllowFlight(false);
-        player.setExp(0);
-        player.setLevel(0);
-        player.setFallDistance(0);
-        player.getInventory().clear();
-        player.setFireTicks(0);
-        player.getActivePotionEffects().clear();
-        player.getInventory().setArmorContents(new ItemStack[4]);
-        player.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
-        player.setGameMode(GameMode.ADVENTURE);
-        player.resetTitle();
-        player.setSaturation(.6f);
-    }
-
-    public boolean isJoinable() {
-        return map != null && (state == GameState.WAITING || (state == GameState.STARTING && players.size() < map.getMaxPlayers()));
-    }
-
-    public GameInfo getInfo() {
-        return info;
-    }
-
-    public Map getMap() {
-        return map;
-    }
-
-    public ArrayList<Player> getPlayers() {
-        return players;
-    }
-
-    public void addPlayer(Player player) {
-        if (isJoinable()) {
-            players.add(player);
-            player.teleport(map.getSpawn());
-
-            onPlayerJoin(player);
-        }
-    }
-
-    public void setState(GameState state) {
-        this.state = state;
-    }
-
-    public GameState getState() {
-        return state;
-    }
 
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent event) {
@@ -143,6 +95,92 @@ public abstract class Game implements Listener {
                 }
             }
         }
+    }
+
+    public void onPlayerJoin(Player player) {
+        player.setHealth(20);
+        player.setHealthScale(20);
+        player.setFoodLevel(20);
+        player.setAllowFlight(false);
+        player.setExp(0);
+        player.setLevel(0);
+        player.setFallDistance(0);
+        player.getInventory().clear();
+        player.setFireTicks(0);
+        player.getActivePotionEffects().clear();
+        player.getInventory().setArmorContents(new ItemStack[4]);
+        player.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
+        player.setGameMode(GameMode.ADVENTURE);
+        player.resetTitle();
+        player.setSaturation(.6f);
+    }
+
+    public void onGameStarting() {
+
+    }
+
+    public void onStart() {
+        onGameStart();
+    }
+
+    public void addPlayer(Player player) {
+        if (isJoinable()) {
+            players.add(player);
+            player.teleport(map.getSpawn());
+
+            onPlayerJoin(player);
+
+            if (players.size() >= map.getAutostartPlayers()) {
+                state = GameState.STARTING;
+                countdown.start();
+
+                onGameStarting();
+            }
+        }
+    }
+
+    public void broadcast(String message) {
+        for (Player player : players) {
+            player.sendMessage(message);
+        }
+    }
+
+    public void broadcastTitle(String title) {
+        broadcastTitle(title, "");
+    }
+
+    public void broadcastTitle(String title, String subtitle) {
+        broadcastTitle(title, subtitle, 20, 60, 20);
+    }
+
+    public void broadcastTitle(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+        for (Player player : players) {
+            player.sendTitle(title, subtitle, fadeIn, stay, fadeOut);
+        }
+    }
+
+    public boolean isJoinable() {
+        return map != null && (state == GameState.WAITING || (state == GameState.STARTING && players.size() < map.getMaxPlayers()));
+    }
+
+    public GameInfo getInfo() {
+        return info;
+    }
+
+    public Map getMap() {
+        return map;
+    }
+
+    public ArrayList<Player> getPlayers() {
+        return players;
+    }
+
+    public void setState(GameState state) {
+        this.state = state;
+    }
+
+    public GameState getState() {
+        return state;
     }
 
     public static Game of(GameInfo gameInfo) {

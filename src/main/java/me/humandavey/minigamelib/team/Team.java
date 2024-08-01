@@ -20,7 +20,8 @@ public enum Team {
     BROWN("Brown", ChatColor.of("#A52A2A"), Material.BROWN_WOOL),
     GREEN("Green", ChatColor.DARK_GREEN, Material.GREEN_WOOL),
     RED("Red", ChatColor.RED, Material.RED_WOOL),
-    BLACK("Black", ChatColor.BLACK, Material.BLACK_WOOL);
+    BLACK("Black", ChatColor.BLACK, Material.BLACK_WOOL),
+    SPECTATOR("Spectator", ChatColor.ITALIC, Material.ELYTRA);
 
     private final String name;
     private final ChatColor color;
