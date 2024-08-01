@@ -127,13 +127,18 @@ public abstract class Game implements Listener {
     public void onMove(PlayerMoveEvent event) {
         if (players.contains(event.getPlayer())) {
             if (state != GameState.LIVE) {
-                if (event.getFrom().getBlock() != event.getTo().getBlock()) {
-                    if (!Util.isInRegion(event.getTo(), map.getCorner1(), map.getCorner2())) {
+                if (!event.getFrom().getBlock().equals(event.getTo().getBlock())) {
+                    if (event.getTo().getBlockY() < 0) {
+                        event.getPlayer().teleport(map.getSpawn());
+                        return;
+                    }
+
+                    if (!Util.isInBounds(event.getTo(), map.getCorner1(), map.getCorner2())) {
                         event.setCancelled(true);
                     }
                 }
-            } else if (event.getFrom().getBlock() != event.getTo().getBlock()) {
-                if (!Util.isInRegion(event.getTo(), map.getCorner1(), map.getCorner2())) {
+            } else if (!event.getFrom().getBlock().equals(event.getTo().getBlock())) {
+                if (!Util.isInBounds(event.getTo(), map.getCorner1(), map.getCorner2())) {
                     event.setCancelled(true);
                 }
             }
