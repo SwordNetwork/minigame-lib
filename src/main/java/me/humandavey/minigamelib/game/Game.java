@@ -3,6 +3,7 @@ package me.humandavey.minigamelib.game;
 import me.humandavey.minigamelib.MinigameLib;
 import me.humandavey.minigamelib.game.games.WaterClutcher;
 import me.humandavey.minigamelib.map.Map;
+import me.humandavey.minigamelib.util.ItemBuilder;
 import me.humandavey.minigamelib.util.Util;
 import me.humandavey.minigamelib.instance.Countdown;
 import org.bukkit.Bukkit;
@@ -15,7 +16,9 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -114,8 +117,24 @@ public abstract class Game implements Listener {
         }
     }
 
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event) {
+        if (getState() == GameState.LIVE) return;
+
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onDrop(PlayerDropItemEvent event) {
+        if (getState() == GameState.LIVE) return;
+
+        event.setCancelled(true);
+    }
+
     private void onPlayerJoin(Player player) {
         Util.resetPlayer(player);
+
+        player.getInventory().setItem(4, new ItemBuilder(Material.NOTE_BLOCK).setItemName(Util.colorize("&fTeam Selector")).onRightClick(p -> {p.sendMessage("open team menu");}).build());
     }
 
     private void onGameStarting() {
