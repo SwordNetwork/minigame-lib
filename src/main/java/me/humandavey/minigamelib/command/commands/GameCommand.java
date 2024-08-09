@@ -18,7 +18,7 @@ public class GameCommand extends Command {
         if (game != null) {
             player.sendMessage(game.getMap().getName() + " - " + game.getState().name());
 
-            player.sendMessage("players:");
+            player.sendMessage("players: (" + game.getPlayers().size() + "/" + game.getMap().getAutostartPlayers() + ")");
             for (Player p : game.getPlayers()) {
                 player.sendMessage("- " + p.getName());
             }

@@ -4,7 +4,7 @@ import me.humandavey.minigamelib.MinigameLib;
 import me.humandavey.minigamelib.game.games.WaterClutcher;
 import me.humandavey.minigamelib.map.Map;
 import me.humandavey.minigamelib.util.Util;
-import me.humandavey.minigame.instance.Countdown;
+import me.humandavey.minigamelib.instance.Countdown;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -14,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -24,13 +25,17 @@ public abstract class Game implements Listener {
     private final GameInfo info;
     private final Map map;
     private final ArrayList<Player> players;
+    private final ArrayList<Player> alivePlayers;
+    private final ArrayList<Player> spectators;
+    private final Countdown countdown;
     private GameState state;
-    private Countdown countdown;
 
     public Game(GameInfo info) {
         this.info = info;
         this.map = MinigameLib.getInstance().getMapManager().getMap(this);
         this.players = new ArrayList<>();
+        this.alivePlayers = new ArrayList<>();
+        this.spectators = new ArrayList<>();
         this.countdown = new Countdown(this);
         this.state = GameState.INIT;
 
@@ -42,12 +47,14 @@ public abstract class Game implements Listener {
 
     public abstract void onGameStart();
 
-    public abstract void onGameEnd();
-
-    public abstract boolean endCondition();
+    @EventHandler
+    private void onChat(AsyncPlayerChatEvent event) {
+        event.setCancelled(true);
+        broadcast(event.getPlayer() + ": " + event.getMessage());
+    }
 
     @EventHandler
-    public void onPlayerDamage(EntityDamageEvent event) {
+    private void onPlayerDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player player) {
             if (players.contains(player)) {
                 if (state != GameState.LIVE) {
@@ -58,7 +65,7 @@ public abstract class Game implements Listener {
     }
 
     @EventHandler
-    public void onBlockBreak(BlockBreakEvent event) {
+    private void onBlockBreak(BlockBreakEvent event) {
         if (players.contains(event.getPlayer())) {
             if (state != GameState.LIVE) {
                 event.setCancelled(true);
@@ -67,7 +74,7 @@ public abstract class Game implements Listener {
     }
 
     @EventHandler
-    public void onBlockPlace(BlockPlaceEvent event) {
+    private void onBlockPlace(BlockPlaceEvent event) {
         if (players.contains(event.getPlayer())) {
             if (state != GameState.LIVE) {
                 event.setCancelled(true);
@@ -76,7 +83,7 @@ public abstract class Game implements Listener {
     }
 
     @EventHandler
-    public void onMove(PlayerMoveEvent event) {
+    private void onMove(PlayerMoveEvent event) {
         if (players.contains(event.getPlayer())) {
             if (state != GameState.LIVE) {
                 if (!event.getFrom().getBlock().equals(event.getTo().getBlock())) {
@@ -97,33 +104,36 @@ public abstract class Game implements Listener {
         }
     }
 
-    public void onPlayerJoin(Player player) {
-        player.setHealth(20);
-        player.setHealthScale(20);
-        player.setFoodLevel(20);
-        player.setAllowFlight(false);
-        player.setExp(0);
-        player.setLevel(0);
-        player.setFallDistance(0);
-        player.getInventory().clear();
-        player.setFireTicks(0);
-        player.getActivePotionEffects().clear();
-        player.getInventory().setArmorContents(new ItemStack[4]);
-        player.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
-        player.setGameMode(GameMode.ADVENTURE);
-        player.resetTitle();
-        player.setSaturation(.6f);
+    private void onPlayerJoin(Player player) {
+        Util.resetPlayer(player);
     }
 
-    public void onGameStarting() {
+    private void onGameStarting() {
 
     }
 
     public void onStart() {
+        state = GameState.LIVE;
+
+        alivePlayers.addAll(players);
+
         onGameStart();
     }
 
-    public void addPlayer(Player player) {
+    public void addSpectator(Player player) {
+        alivePlayers.remove(player);
+        spectators.add(player);
+        if (!players.contains(player)) {
+            players.add(player);
+        }
+
+        player.sendMessage("You are now a spectator! (add msg)");
+        Util.resetPlayer(player);
+        player.setGameMode(GameMode.SPECTATOR);
+        player.teleport(map.getSpawn().add(0, 30, 0));
+    }
+
+    private void addPlayer(Player player) {
         if (isJoinable()) {
             players.add(player);
             player.teleport(map.getSpawn());
@@ -131,12 +141,21 @@ public abstract class Game implements Listener {
             onPlayerJoin(player);
 
             if (players.size() >= map.getAutostartPlayers()) {
-                state = GameState.STARTING;
-                countdown.start();
-
-                onGameStarting();
+                attemptStart();
             }
         }
+    }
+
+    public boolean attemptStart() {
+        if (state == GameState.WAITING) {
+
+            state = GameState.STARTING;
+            countdown.start();
+
+            onGameStarting();
+            return true;
+        }
+        return false;
     }
 
     public void broadcast(String message) {
@@ -159,7 +178,7 @@ public abstract class Game implements Listener {
         }
     }
 
-    public boolean isJoinable() {
+    private boolean isJoinable() {
         return map != null && (state == GameState.WAITING || (state == GameState.STARTING && players.size() < map.getMaxPlayers()));
     }
 
@@ -175,6 +194,14 @@ public abstract class Game implements Listener {
         return players;
     }
 
+    public ArrayList<Player> getAlivePlayers() {
+        return alivePlayers;
+    }
+
+    public ArrayList<Player> getSpectators() {
+        return spectators;
+    }
+
     public void setState(GameState state) {
         this.state = state;
     }
@@ -183,7 +210,7 @@ public abstract class Game implements Listener {
         return state;
     }
 
-    public static Game of(GameInfo gameInfo) {
+    private static Game of(GameInfo gameInfo) {
         switch (gameInfo.name()) {
             case "Water Clutcher" -> {
                 return new WaterClutcher();
