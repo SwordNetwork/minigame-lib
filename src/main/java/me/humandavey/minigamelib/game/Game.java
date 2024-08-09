@@ -133,7 +133,7 @@ public abstract class Game implements Listener {
         player.teleport(map.getSpawn().add(0, 30, 0));
     }
 
-    private void addPlayer(Player player) {
+    public void addPlayer(Player player) {
         if (isJoinable()) {
             players.add(player);
             player.teleport(map.getSpawn());
@@ -178,7 +178,7 @@ public abstract class Game implements Listener {
         }
     }
 
-    private boolean isJoinable() {
+    public boolean isJoinable() {
         return map != null && (state == GameState.WAITING || (state == GameState.STARTING && players.size() < map.getMaxPlayers()));
     }
 
@@ -210,7 +210,7 @@ public abstract class Game implements Listener {
         return state;
     }
 
-    private static Game of(GameInfo gameInfo) {
+    public static Game of(GameInfo gameInfo) {
         switch (gameInfo.name()) {
             case "Water Clutcher" -> {
                 return new WaterClutcher();
